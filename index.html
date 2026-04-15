@@ -1,532 +1,698 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Noey's Career Expert System</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --bg: #0a0d14;
-    --surface: #111827;
-    --surface2: #1a2235;
-    --border: rgba(59,130,246,0.15);
-    --border-strong: rgba(59,130,246,0.3);
-    --blue: #3b82f6;
-    --blue-bright: #60a5fa;
-    --blue-dark: #1d4ed8;
-    --blue-glow: rgba(59,130,246,0.12);
-    --white: #f8fafc;
-    --muted: #64748b;
-    --muted-light: #94a3b8;
-    --success: #22d3ee;
-    --fail: #f87171;
-    --desired: #a78bfa;
-    --text: #e2e8f0;
-  }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Seen / Unseen</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --bg: #f6f1eb;
+      --paper: #fdf8f2;
+      --ink: #2f2a26;
+      --muted: #6d6259;
+      --accent: #b67c7c;
+      --accent-dark: #8f5e5e;
+      --shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+      --border: rgba(47, 42, 38, 0.12);
+    }
 
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Inter', sans-serif;
-    font-weight: 400;
-    min-height: 100vh;
-    background-image:
-      radial-gradient(ellipse at 0% 0%, rgba(29,78,216,0.15) 0%, transparent 60%),
-      radial-gradient(ellipse at 100% 100%, rgba(59,130,246,0.08) 0%, transparent 60%);
-  }
+    body {
+      font-family: Georgia, 'Times New Roman', serif;
+      background: linear-gradient(180deg, #f8f4ef 0%, #efe7de 100%);
+      color: var(--ink);
+      min-height: 100vh;
+      overflow: hidden;
+    }
 
-  header {
-    background: linear-gradient(135deg, #0a0d14 0%, #0f172a 50%, #0d1526 100%);
-    border-bottom: 1px solid var(--border-strong);
-    padding: 3rem 2rem 2.5rem;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-  }
-  header::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background:
-      repeating-linear-gradient(90deg, transparent, transparent 80px, rgba(59,130,246,0.03) 80px, rgba(59,130,246,0.03) 81px),
-      repeating-linear-gradient(0deg, transparent, transparent 80px, rgba(59,130,246,0.03) 80px, rgba(59,130,246,0.03) 81px);
-  }
-  header::after {
-    content: '';
-    position: absolute;
-    bottom: 0; left: 50%; transform: translateX(-50%);
-    width: 200px; height: 1px;
-    background: linear-gradient(90deg, transparent, var(--blue), transparent);
-  }
-  .header-badge {
-    display: inline-block;
-    font-size: 0.7rem;
-    font-weight: 600;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--blue-bright);
-    background: rgba(59,130,246,0.1);
-    border: 1px solid rgba(59,130,246,0.25);
-    border-radius: 4px;
-    padding: 0.3rem 0.8rem;
-    margin-bottom: 1rem;
-    position: relative;
-  }
-  header h1 {
-    font-family: 'Sora', sans-serif;
-    font-size: clamp(1.8rem, 5vw, 3rem);
-    font-weight: 800;
-    letter-spacing: -0.03em;
-    position: relative;
-    color: var(--white);
-    line-height: 1.1;
-  }
-  header h1 span { color: var(--blue-bright); }
-  header p {
-    margin-top: 0.75rem;
-    color: var(--muted-light);
-    font-size: 0.85rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    font-weight: 500;
-    position: relative;
-  }
+    .site-shell {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
 
-  .steps-bar {
-    display: flex;
-    justify-content: center;
-    background: var(--surface);
-    border-bottom: 1px solid var(--border);
-  }
-  .step-item {
-    padding: 1rem 2rem;
-    font-size: 0.75rem;
-    font-weight: 600;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--muted);
-    position: relative;
-    transition: all 0.3s ease;
-    flex: 1;
-    text-align: center;
-    max-width: 200px;
-  }
-  .step-item.active { color: var(--blue-bright); background: rgba(59,130,246,0.05); }
-  .step-item.active::after {
-    content: '';
-    position: absolute;
-    bottom: 0; left: 0; right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, var(--blue-dark), var(--blue-bright));
-  }
-  .step-item.done { color: var(--success); }
-  .step-item.done::before { content: '✓ '; }
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 20;
+      backdrop-filter: blur(10px);
+      background: rgba(248, 244, 239, 0.78);
+      border-bottom: 1px solid rgba(47, 42, 38, 0.08);
+      padding: 14px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
 
-  main { max-width: 740px; margin: 0 auto; padding: 2.5rem 1.5rem 4rem; }
+    .brand {
+      font-size: 1rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
 
-  .card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 2.5rem;
-    box-shadow: 0 0 0 1px rgba(59,130,246,0.05), 0 20px 60px rgba(0,0,0,0.4);
-    animation: fadeUp 0.35s ease both;
-    position: relative;
-    overflow: hidden;
-  }
-  .card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(59,130,246,0.4), transparent);
-  }
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(16px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
+    .page-indicator {
+      font-size: 0.95rem;
+      color: var(--muted);
+    }
 
-  .question-label {
-    font-size: 0.7rem; font-weight: 700;
-    letter-spacing: 0.18em; text-transform: uppercase;
-    color: var(--blue); margin-bottom: 0.6rem;
-  }
-  .question-text {
-    font-family: 'Sora', sans-serif;
-    font-size: 1.4rem; font-weight: 600;
-    line-height: 1.35; margin-bottom: 2rem;
-    color: var(--white);
-  }
+    main {
+      flex: 1;
+      position: relative;
+      margin-top: 68px;
+    }
 
-  .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.65rem; margin-bottom: 2rem; }
-  .option-btn {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 0.85rem 1.1rem;
-    text-align: left; cursor: pointer;
-    font-family: 'Inter', sans-serif;
-    font-size: 0.875rem; font-weight: 500;
-    color: var(--muted-light);
-    transition: all 0.2s ease;
-  }
-  .option-btn:hover {
-    border-color: var(--blue);
-    color: var(--white);
-    background: rgba(59,130,246,0.08);
-    box-shadow: 0 0 0 1px rgba(59,130,246,0.2);
-  }
-  .option-btn.selected {
-    border-color: var(--blue);
-    background: rgba(59,130,246,0.12);
-    color: var(--blue-bright);
-    font-weight: 600;
-    box-shadow: 0 0 0 1px rgba(59,130,246,0.3), 0 4px 12px rgba(59,130,246,0.1);
-  }
-  .option-btn.selected::before { content: '› '; font-weight: 700; }
+    .slide {
+      display: none;
+      min-height: calc(100vh - 68px);
+      padding: 42px 96px 88px;
+      align-items: center;
+      justify-content: center;
+    }
 
-  .number-input-wrap { display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem; }
-  .number-input-wrap input[type="number"] {
-    width: 110px; padding: 0.8rem 1rem;
-    font-family: 'Sora', sans-serif;
-    font-size: 1.8rem; font-weight: 700;
-    border: 1px solid var(--border-strong);
-    border-radius: 8px;
-    background: var(--surface2);
-    color: var(--blue-bright);
-    text-align: center; outline: none;
-    transition: all 0.2s;
-  }
-  .number-input-wrap input[type="number"]:focus {
-    border-color: var(--blue);
-    box-shadow: 0 0 0 3px rgba(59,130,246,0.15);
-    background: rgba(59,130,246,0.06);
-  }
-  .number-input-wrap label { font-size: 0.9rem; color: var(--muted-light); font-weight: 500; }
+    .slide.active {
+      display: flex;
+    }
 
-  .nav-row { display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem; }
-  .btn-primary {
-    background: var(--blue);
-    color: white; border: none;
-    padding: 0.85rem 2.2rem;
-    font-family: 'Inter', sans-serif;
-    font-size: 0.82rem; font-weight: 700;
-    letter-spacing: 0.08em; text-transform: uppercase;
-    cursor: pointer; border-radius: 8px;
-    transition: all 0.2s ease;
-    box-shadow: 0 4px 16px rgba(59,130,246,0.3);
-  }
-  .btn-primary:hover { background: var(--blue-bright); transform: translateY(-1px); box-shadow: 0 8px 24px rgba(59,130,246,0.4); }
-  .btn-secondary {
-    background: transparent; color: var(--muted-light);
-    border: 1px solid var(--border);
-    padding: 0.85rem 1.5rem;
-    font-family: 'Inter', sans-serif;
-    font-size: 0.82rem; font-weight: 600;
-    letter-spacing: 0.06em; text-transform: uppercase;
-    cursor: pointer; border-radius: 8px; transition: all 0.2s ease;
-  }
-  .btn-secondary:hover { border-color: var(--blue); color: var(--blue-bright); background: var(--blue-glow); }
+    .content-wrap {
+      width: 100%;
+      max-width: 1300px;
+    }
 
-  .progress-wrap { margin-bottom: 2rem; }
-  .progress-bar-bg { height: 3px; background: var(--surface2); border-radius: 99px; overflow: hidden; }
-  .progress-bar-fill {
-    height: 100%;
-    background: linear-gradient(90deg, var(--blue-dark), var(--blue-bright));
-    border-radius: 99px;
-    transition: width 0.5s cubic-bezier(0.25, 1, 0.5, 1);
-    box-shadow: 0 0 8px rgba(59,130,246,0.6);
-  }
-  .progress-text { font-size: 0.7rem; font-weight: 600; color: var(--muted); text-align: right; margin-top: 0.5rem; letter-spacing: 0.06em; }
+    .intro-card,
+    .closing-card,
+    .placeholder-card {
+      background: rgba(253, 248, 242, 0.92);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+      padding: 48px;
+    }
 
-  #results { display: none; }
-  .results-title { font-family: 'Sora', sans-serif; font-size: 2rem; font-weight: 800; margin-bottom: 0.4rem; color: var(--white); letter-spacing: -0.02em; }
-  .results-subtitle { color: var(--muted-light); margin-bottom: 2rem; font-size: 0.875rem; font-weight: 500; }
+    .intro-grid,
+    .closing-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 32px;
+      align-items: center;
+    }
 
-  .position-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 10px; margin-bottom: 0.75rem;
-    overflow: hidden;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-    animation: fadeUp 0.35s ease both;
-    transition: border-color 0.2s, box-shadow 0.2s;
-  }
-  .position-card:nth-child(2) { animation-delay: 0.07s; }
-  .position-card:nth-child(3) { animation-delay: 0.14s; }
-  .position-card:nth-child(4) { animation-delay: 0.21s; }
-  .position-card:hover { border-color: var(--border-strong); box-shadow: 0 8px 32px rgba(0,0,0,0.4), 0 0 0 1px rgba(59,130,246,0.1); }
+    .eyebrow {
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-size: 0.78rem;
+      color: var(--accent-dark);
+      margin-bottom: 14px;
+    }
 
-  .pos-header { display: flex; align-items: center; justify-content: space-between; padding: 1.2rem 1.5rem; cursor: pointer; user-select: none; transition: background 0.2s; }
-  .pos-header:hover { background: rgba(59,130,246,0.04); }
-  .pos-name { font-family: 'Sora', sans-serif; font-size: 1rem; font-weight: 600; color: var(--white); }
-  .pos-badge { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 0.3rem 0.85rem; border-radius: 4px; }
-  .badge-qualified { background: rgba(34,211,238,0.1); color: var(--success); border: 1px solid rgba(34,211,238,0.2); }
-  .badge-not-qualified { background: rgba(248,113,113,0.1); color: var(--fail); border: 1px solid rgba(248,113,113,0.2); }
+    h1, h2 {
+      font-weight: 500;
+      line-height: 1.05;
+    }
 
-  .pos-body { border-top: 1px solid var(--border); padding: 1.25rem 1.5rem; display: none; background: rgba(59,130,246,0.02); }
-  .pos-body.open { display: block; }
+    h1 {
+      font-size: clamp(2.4rem, 4vw, 4.8rem);
+      margin-bottom: 18px;
+    }
 
-  .criteria-row { display: flex; align-items: flex-start; gap: 0.75rem; margin-bottom: 0.55rem; font-size: 0.855rem; font-weight: 500; }
-  .criteria-icon { flex-shrink: 0; margin-top: 1px; font-size: 0.8rem; }
-  .criteria-met { color: var(--success); }
-  .criteria-miss { color: var(--fail); }
-  .criteria-desired { color: var(--desired); }
+    h2 {
+      font-size: clamp(2rem, 3vw, 3rem);
+      margin-bottom: 16px;
+    }
 
-  .section-label-sm { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--blue); margin: 1rem 0 0.6rem; }
+    .lead,
+    .body-copy,
+    .placeholder-text {
+      color: var(--muted);
+      font-size: 1.08rem;
+      line-height: 1.75;
+    }
 
-  .restart-btn { margin-top: 2rem; text-align: center; }
-  .chevron { transition: transform 0.3s; color: var(--muted); font-size: 0.9rem; }
-  .chevron.open { transform: rotate(180deg); }
+    .prompt-box {
+      border: 1px dashed rgba(47, 42, 38, 0.25);
+      background: rgba(255, 255, 255, 0.45);
+      border-radius: 22px;
+      padding: 24px;
+    }
 
-  #intro { display: block; }
-  #questionnaire { display: none; }
+    .prompt-box h3 {
+      font-size: 1.1rem;
+      margin-bottom: 12px;
+      font-weight: 500;
+    }
 
-  .intro-lead { font-family: 'Sora', sans-serif; font-size: 1.5rem; font-weight: 700; line-height: 1.3; margin-bottom: 1rem; color: var(--white); }
-  .intro-body { color: var(--muted-light); line-height: 1.75; margin-bottom: 2rem; font-size: 0.9rem; }
+    .prompt-box ul {
+      padding-left: 20px;
+      color: var(--muted);
+      line-height: 1.8;
+    }
 
-  .positions-preview { display: grid; grid-template-columns: 1fr 1fr; gap: 0.65rem; margin-bottom: 2rem; }
-  .pos-preview-chip {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 8px; padding: 0.85rem 1rem;
-    font-size: 0.83rem; font-weight: 600; color: var(--text);
-    transition: all 0.2s;
-  }
-  .pos-preview-chip:hover { border-color: var(--blue); background: rgba(59,130,246,0.06); transform: translateY(-1px); }
-  .pos-preview-chip span { display: block; font-size: 0.72rem; font-weight: 400; color: var(--muted); margin-top: 0.25rem; }
+    .slide-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 34px;
+      align-items: stretch;
+    }
 
-  .divider { height: 1px; background: linear-gradient(90deg, transparent, var(--border-strong), transparent); margin: 1.5rem 0; }
-</style>
+    .journal-card {
+      position: relative;
+      min-height: 620px;
+      border-radius: 24px;
+      background: #f7efdf;
+      box-shadow: var(--shadow);
+      padding: 44px 38px 38px;
+      overflow: hidden;
+      border: 1px solid rgba(80, 60, 35, 0.12);
+    }
+
+    .journal-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        repeating-linear-gradient(
+          to bottom,
+          transparent 0,
+          transparent 35px,
+          rgba(117, 137, 201, 0.22) 36px,
+          transparent 37px
+        );
+      pointer-events: none;
+    }
+
+    .journal-card::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 58px;
+      width: 2px;
+      background: rgba(192, 109, 109, 0.28);
+    }
+
+    .journal-inner {
+      position: relative;
+      z-index: 1;
+      padding-left: 42px;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .journal-label {
+      font-size: 0.92rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #8b6a56;
+      margin-bottom: 26px;
+    }
+
+    .journal-date {
+      font-family: 'Courier New', monospace;
+      color: #8b7e72;
+      margin-bottom: 28px;
+      font-size: 0.95rem;
+    }
+
+    .journal-text {
+      font-family: 'Brush Script MT', 'Segoe Script', cursive;
+      font-size: clamp(1.8rem, 2.2vw, 2.3rem);
+      line-height: 1.5;
+      color: #3f332b;
+      max-width: 95%;
+    }
+
+    .journal-note {
+      margin-top: auto;
+      padding-top: 24px;
+      font-size: 0.95rem;
+      color: #8b7e72;
+      font-style: italic;
+    }
+
+    .insta-shell {
+      min-height: 620px;
+      background: #fff;
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      border: 1px solid rgba(47, 42, 38, 0.12);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .insta-top {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 18px 20px;
+      border-bottom: 1px solid rgba(47, 42, 38, 0.08);
+    }
+
+    .avatar {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #d3a6a6, #f1d6d6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      color: #5e4343;
+      font-weight: 600;
+    }
+
+    .profile-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .username {
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+    }
+
+    .location {
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 0.78rem;
+      color: #7b7b7b;
+    }
+
+    .image-placeholder {
+      flex: 1;
+      min-height: 360px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background:
+        linear-gradient(rgba(255,255,255,0.55), rgba(255,255,255,0.55)),
+        linear-gradient(135deg, #e8d7d7, #f5eee7 48%, #d8c8c0);
+      border-bottom: 1px solid rgba(47, 42, 38, 0.08);
+      padding: 24px;
+      text-align: center;
+      color: #7a6d64;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .image-placeholder span {
+      display: inline-block;
+      max-width: 270px;
+      line-height: 1.7;
+      font-size: 0.98rem;
+    }
+
+    .insta-actions {
+      display: flex;
+      gap: 16px;
+      padding: 16px 20px 10px;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 1.2rem;
+    }
+
+    .insta-caption {
+      padding: 0 20px 24px;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 0.98rem;
+      line-height: 1.6;
+      color: #222;
+    }
+
+    .insta-caption strong {
+      margin-right: 8px;
+    }
+
+    .placeholder-card {
+      text-align: center;
+      min-height: 520px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .placeholder-card h2 {
+      margin-bottom: 14px;
+    }
+
+    .placeholder-chip {
+      display: inline-block;
+      margin-top: 22px;
+      padding: 10px 16px;
+      border-radius: 999px;
+      background: rgba(182, 124, 124, 0.12);
+      color: var(--accent-dark);
+      font-size: 0.92rem;
+      letter-spacing: 0.04em;
+    }
+
+    .nav-btn {
+      position: fixed;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 25;
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      border: none;
+      background: rgba(255, 255, 255, 0.88);
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.14);
+      color: var(--ink);
+      font-size: 1.9rem;
+      cursor: pointer;
+      transition: transform 0.2s ease, background 0.2s ease;
+    }
+
+    .nav-btn:hover {
+      transform: translateY(-50%) scale(1.04);
+      background: white;
+    }
+
+    .nav-btn:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+      transform: translateY(-50%);
+    }
+
+    .nav-prev {
+      left: 24px;
+    }
+
+    .nav-next {
+      right: 24px;
+    }
+
+    .bottom-nav {
+      position: fixed;
+      bottom: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 22;
+      background: rgba(255,255,255,0.78);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(47, 42, 38, 0.08);
+      border-radius: 999px;
+      padding: 10px 16px;
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
+      font-size: 0.95rem;
+      color: var(--muted);
+    }
+
+    .slide-count {
+      font-family: Arial, Helvetica, sans-serif;
+      letter-spacing: 0.04em;
+    }
+
+    @media (max-width: 1050px) {
+      .slide,
+      .slide.active {
+        padding: 32px 56px 100px;
+      }
+
+      .slide-layout,
+      .intro-grid,
+      .closing-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .journal-card,
+      .insta-shell {
+        min-height: 520px;
+      }
+    }
+
+    @media (max-width: 700px) {
+      header {
+        padding: 12px 16px;
+      }
+
+      .slide,
+      .slide.active {
+        padding: 24px 20px 100px;
+      }
+
+      .intro-card,
+      .closing-card,
+      .placeholder-card {
+        padding: 28px;
+        border-radius: 22px;
+      }
+
+      .nav-btn {
+        width: 48px;
+        height: 48px;
+        font-size: 1.5rem;
+      }
+
+      .nav-prev {
+        left: 10px;
+      }
+
+      .nav-next {
+        right: 10px;
+      }
+
+      .journal-card,
+      .insta-shell {
+        min-height: 470px;
+      }
+
+      .journal-text {
+        font-size: 1.65rem;
+      }
+    }
+  </style>
 </head>
 <body>
+  <div class="site-shell">
+    <header>
+      <div class="brand">Seen / Unseen</div>
+      <div class="page-indicator" id="pageIndicator">Introduction</div>
+    </header>
 
-<header>
-  <div class="header-badge">Expert System</div>
-  <h1>Noey's <span>Career</span> Expert System</h1>
-  <p>Qualification Assessment Tool</p>
-</header>
-
-<div class="steps-bar">
-  <div class="step-item active" id="step1">01 — Intro</div>
-  <div class="step-item" id="step2">02 — Questions</div>
-  <div class="step-item" id="step3">03 — Results</div>
-</div>
-
-<main>
-
-  <div id="intro">
-    <div class="card">
-      <p class="question-label">Welcome</p>
-      <p class="intro-lead">Find out which positions you qualify for.</p>
-      <p class="intro-body">Answer a short set of questions about your education, skills, and experience. The system will evaluate your profile against each available role and show you exactly where you stand — and what's needed to qualify for any you don't yet meet.</p>
-      <div class="divider"></div>
-      <div class="positions-preview">
-        <div class="pos-preview-chip">Entry-Level Python Engineer <span>Bachelor's in CS required</span></div>
-        <div class="pos-preview-chip">Python Engineer <span>3 yrs Python + Agile required</span></div>
-        <div class="pos-preview-chip">Project Manager <span>PMI Lean Cert required</span></div>
-        <div class="pos-preview-chip">Senior Knowledge Engineer <span>Master's in CS required</span></div>
-      </div>
-      <button class="btn-primary" onclick="startQuiz()">Begin Assessment →</button>
-    </div>
-  </div>
-
-  <div id="questionnaire">
-    <div class="progress-wrap">
-      <div class="progress-bar-bg"><div class="progress-bar-fill" id="progressFill" style="width:0%"></div></div>
-      <div class="progress-text" id="progressText">Question 1 of 13</div>
-    </div>
-    <div class="card" id="questionCard"></div>
-  </div>
-
-  <div id="results">
-    <p class="results-title">Your Results</p>
-    <p class="results-subtitle">Click any position to see the full breakdown.</p>
-    <div id="resultsContainer"></div>
-    <div class="restart-btn">
-      <button class="btn-secondary" onclick="restartQuiz()">← Start Over</button>
-    </div>
-  </div>
-
-</main>
-
-<script>
-const questions = [
-  { id: 'degree', text: 'What is your highest level of education?', type: 'options',
-    options: ["No degree","Associate degree","Bachelor's in CS","Bachelor's (non-CS)","Master's in CS","Master's (non-CS)"] },
-  { id: 'python_coursework', text: 'Have you completed Python coursework (academic courses)?', type: 'options', options: ['Yes','No'] },
-  { id: 'se_coursework', text: 'Have you completed Software Engineering coursework?', type: 'options', options: ['Yes','No'] },
-  { id: 'agile_course', text: 'Have you completed an Agile methodology course?', type: 'options', options: ['Yes','No'] },
-  { id: 'python_years', text: 'How many years of professional Python development experience do you have?', type: 'number', unit: 'years' },
-  { id: 'data_years', text: 'How many years of data development experience do you have?', type: 'number', unit: 'years' },
-  { id: 'agile_projects', text: 'Have you worked on Agile projects professionally?', type: 'options', options: ['Yes','No'] },
-  { id: 'git_experience', text: 'Have you used Git for version control?', type: 'options', options: ['Yes','No'] },
-  { id: 'pm_years', text: 'How many years of software project management experience do you have?', type: 'number', unit: 'years' },
-  { id: 'agile_pm_years', text: 'How many years have you managed Agile projects specifically?', type: 'number', unit: 'years' },
-  { id: 'pmi_cert', text: 'Do you hold a PMI Lean Project Management Certification?', type: 'options', options: ['Yes','No'] },
-  { id: 'expert_systems_years', text: 'How many years of Expert Systems development experience do you have?', type: 'number', unit: 'years' },
-  { id: 'data_arch_years', text: 'How many years of data architecture and data development experience do you have?', type: 'number', unit: 'years' }
-];
-
-let answers = {}, currentQ = 0;
-
-function startQuiz() {
-  document.getElementById('intro').style.display = 'none';
-  document.getElementById('questionnaire').style.display = 'block';
-  document.getElementById('step1').className = 'step-item done';
-  document.getElementById('step2').className = 'step-item active';
-  renderQuestion();
-}
-
-function renderQuestion() {
-  const q = questions[currentQ];
-  const fill = (currentQ / questions.length * 100).toFixed(0);
-  document.getElementById('progressFill').style.width = fill + '%';
-  document.getElementById('progressText').textContent = `Question ${currentQ + 1} of ${questions.length}`;
-
-  let html = `<p class="question-label">Question ${currentQ + 1}</p>
-    <p class="question-text">${q.text}</p>`;
-
-  if (q.type === 'options') {
-    html += `<div class="options-grid">`;
-    q.options.forEach(opt => {
-      const sel = answers[q.id] === opt ? 'selected' : '';
-      html += `<button class="option-btn ${sel}" onclick="selectOption('${opt.replace(/'/g,"\\'")}', this)">${opt}</button>`;
-    });
-    html += `</div>`;
-  } else {
-    const val = answers[q.id] !== undefined ? answers[q.id] : 0;
-    html += `<div class="number-input-wrap">
-      <input type="number" id="numInput" value="${val}" min="0" max="50" step="0.5">
-      <label>${q.unit}</label>
-    </div>`;
-  }
-
-  html += `<div class="nav-row">
-    ${currentQ > 0 ? '<button class="btn-secondary" onclick="prevQ()">← Back</button>' : '<div></div>'}
-    <button class="btn-primary" onclick="nextQ()">${currentQ < questions.length - 1 ? 'Next →' : 'See Results →'}</button>
-  </div>`;
-
-  document.getElementById('questionCard').innerHTML = html;
-  const card = document.getElementById('questionCard');
-  card.style.animation = 'none';
-  requestAnimationFrame(() => card.style.animation = '');
-}
-
-function selectOption(val, el) {
-  document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
-  el.classList.add('selected');
-  answers[questions[currentQ].id] = val;
-}
-
-function nextQ() {
-  const q = questions[currentQ];
-  if (q.type === 'options' && !answers[q.id]) { alert('Please select an option to continue.'); return; }
-  if (q.type === 'number') answers[q.id] = parseFloat(document.getElementById('numInput').value) || 0;
-  if (currentQ < questions.length - 1) { currentQ++; renderQuestion(); }
-  else showResults();
-}
-
-function prevQ() { if (currentQ > 0) { currentQ--; renderQuestion(); } }
-
-function showResults() {
-  document.getElementById('questionnaire').style.display = 'none';
-  document.getElementById('results').style.display = 'block';
-  document.getElementById('step2').className = 'step-item done';
-  document.getElementById('step3').className = 'step-item active';
-
-  const a = answers;
-  const hasBachelorCS = a.degree === "Bachelor's in CS";
-  const hasMastersCS = a.degree === "Master's in CS";
-
-  const positions = [
-    { name: 'Entry-Level Python Engineer', evaluate: () => ({
-        needed: [
-          { label: 'Python coursework', met: a.python_coursework === 'Yes' },
-          { label: 'Software Engineering coursework', met: a.se_coursework === 'Yes' },
-          { label: "Bachelor's in CS", met: hasBachelorCS || hasMastersCS }
-        ],
-        desired: [{ label: 'Agile course completed', met: a.agile_course === 'Yes' }]
-    })},
-    { name: 'Python Engineer', evaluate: () => ({
-        needed: [
-          { label: '3+ years Python development', met: a.python_years >= 3 },
-          { label: '1+ year data development', met: a.data_years >= 1 },
-          { label: 'Experience in Agile projects', met: a.agile_projects === 'Yes' },
-          { label: "Bachelor's in CS", met: hasBachelorCS || hasMastersCS }
-        ],
-        desired: [{ label: 'Used Git', met: a.git_experience === 'Yes' }]
-    })},
-    { name: 'Project Manager', evaluate: () => ({
-        needed: [
-          { label: '3+ years managing software projects', met: a.pm_years >= 3 },
-          { label: '2+ years managing Agile projects', met: a.agile_pm_years >= 2 },
-          { label: 'PMI Lean Project Management Certification', met: a.pmi_cert === 'Yes' }
-        ],
-        desired: []
-    })},
-    { name: 'Senior Knowledge Engineer', evaluate: () => ({
-        needed: [
-          { label: '4+ years Python development', met: a.python_years >= 4 },
-          { label: '2+ years developing Expert Systems', met: a.expert_systems_years >= 2 },
-          { label: '2+ years data architecture & data development', met: a.data_arch_years >= 2 },
-          { label: "Master's in CS", met: hasMastersCS }
-        ],
-        desired: []
-    })}
-  ];
-
-  let html = '';
-  positions.forEach((pos, i) => {
-    const { needed, desired } = pos.evaluate();
-    const qualified = needed.every(n => n.met);
-    html += `
-      <div class="position-card">
-        <div class="pos-header" onclick="toggleCard(${i})">
-          <span class="pos-name">${pos.name}</span>
-          <div style="display:flex;align-items:center;gap:0.75rem">
-            <span class="pos-badge ${qualified ? 'badge-qualified' : 'badge-not-qualified'}">${qualified ? '✓ Qualified' : '✗ Not Qualified'}</span>
-            <span class="chevron" id="chev${i}">▾</span>
+    <main>
+      <section class="slide active" data-title="Introduction">
+        <div class="content-wrap">
+          <div class="intro-card">
+            <div class="intro-grid">
+              <div>
+                <div class="eyebrow">WGSS Digital Exhibit</div>
+                <h1>Seen / Unseen</h1>
+                <p class="lead">
+                  This project explores the contrast between internal reality and external presentation,
+                  inspired by <em>Jagged Little Pill</em> and feminist themes of perfection, invisibility,
+                  identity, and voice.
+                </p>
+                <br />
+                <p class="body-copy">
+                  Use this opening section to introduce your argument, connect the musical to your course,
+                  and explain how the entries that follow reveal the gap between what is performed and what is lived.
+                </p>
+              </div>
+              <div class="prompt-box">
+                <h3>Intro ideas to include here</h3>
+                <ul>
+                  <li>Your project thesis</li>
+                  <li>Why you chose <em>Jagged Little Pill</em></li>
+                  <li>How this connects to feminist themes</li>
+                  <li>The author or reading you plan to use</li>
+                  <li>A short note on the format of the site</li>
+                </ul>
+              </div>
+            </div>
           </div>
         </div>
-        <div class="pos-body" id="body${i}">
-          <div class="section-label-sm">Required Skills & Qualifications</div>
-          ${needed.map(n => `
-            <div class="criteria-row ${n.met ? 'criteria-met' : 'criteria-miss'}">
-              <span class="criteria-icon">${n.met ? '✓' : '✗'}</span>
-              <span>${n.label}${!n.met ? ' <em style="opacity:0.5;font-size:0.82em;font-weight:400">(missing)</em>' : ''}</span>
-            </div>`).join('')}
-          ${desired.length ? `
-          <div class="section-label-sm">Desired Skills</div>
-          ${desired.map(d => `
-            <div class="criteria-row criteria-desired">
-              <span class="criteria-icon">${d.met ? '★' : '☆'}</span>
-              <span>${d.label} — ${d.met ? 'You have this!' : 'Nice to have'}</span>
-            </div>`).join('')}` : ''}
+      </section>
+
+      <section class="slide" data-title="Entry 1">
+        <div class="content-wrap">
+          <div class="slide-layout">
+            <article class="journal-card">
+              <div class="journal-inner">
+                <div class="journal-label">Private Journal</div>
+                <div class="journal-date">Entry 01</div>
+                <div class="journal-text">
+                  I practiced my smile in the mirror today. Not because I was happy, but because I needed to look like I was. I don’t think anyone would know the difference anyway.
+                </div>
+                <div class="journal-note">Theme: The performance of perfection</div>
+              </div>
+            </article>
+
+            <article class="insta-shell">
+              <div class="insta-top">
+                <div class="avatar">NJ</div>
+                <div class="profile-meta">
+                  <div class="username">yourusername</div>
+                  <div class="location">Add location or tag here</div>
+                </div>
+              </div>
+
+              <div class="image-placeholder">
+                <span>
+                  Insert your photo here.<br />
+                  Replace this box with an image by swapping this section for an <code>&lt;img&gt;</code> tag.
+                </span>
+              </div>
+
+              <div class="insta-actions">♡ ⤴︎ ✦</div>
+              <div class="insta-caption">
+                <strong>yourusername</strong>
+                “Nothing but gratitude lately 🤍 feeling so lucky for this life!!”
+              </div>
+            </article>
+          </div>
         </div>
-      </div>`;
-  });
+      </section>
 
-  document.getElementById('resultsContainer').innerHTML = html;
-  positions.forEach((_, i) => toggleCard(i));
-}
+      <section class="slide" data-title="Entry 2">
+        <div class="content-wrap">
+          <div class="placeholder-card">
+            <div class="eyebrow">Entry 02</div>
+            <h2>Add your next journal + visual here</h2>
+            <p class="placeholder-text">
+              Use this slide for your second paired entry. You can keep the same split-screen format,
+              or change the right side into a magazine cover, candid photo, text thread, headline, or another visual format.
+            </p>
+            <div class="placeholder-chip">Replace with your content</div>
+          </div>
+        </div>
+      </section>
 
-function toggleCard(i) {
-  document.getElementById('body' + i).classList.toggle('open');
-  document.getElementById('chev' + i).classList.toggle('open');
-}
+      <section class="slide" data-title="Entry 3">
+        <div class="content-wrap"><div class="placeholder-card"><div class="eyebrow">Entry 03</div><h2>Slide 3</h2><p class="placeholder-text">Add your third entry here.</p><div class="placeholder-chip">Replace with your content</div></div></div>
+      </section>
+      <section class="slide" data-title="Entry 4">
+        <div class="content-wrap"><div class="placeholder-card"><div class="eyebrow">Entry 04</div><h2>Slide 4</h2><p class="placeholder-text">Add your fourth entry here.</p><div class="placeholder-chip">Replace with your content</div></div></div>
+      </section>
+      <section class="slide" data-title="Entry 5">
+        <div class="content-wrap"><div class="placeholder-card"><div class="eyebrow">Entry 05</div><h2>Slide 5</h2><p class="placeholder-text">Add your fifth entry here.</p><div class="placeholder-chip">Replace with your content</div></div></div>
+      </section>
+      <section class="slide" data-title="Entry 6">
+        <div class="content-wrap"><div class="placeholder-card"><div class="eyebrow">Entry 06</div><h2>Slide 6</h2><p class="placeholder-text">Add your sixth entry here.</p><div class="placeholder-chip">Replace with your content</div></div></div>
+      </section>
+      <section class="slide" data-title="Entry 7">
+        <div class="content-wrap"><div class="placeholder-card"><div class="eyebrow">Entry 07</div><h2>Slide 7</h2><p class="placeholder-text">Add your seventh entry here.</p><div class="placeholder-chip">Replace with your content</div></div></div>
+      </section>
+      <section class="slide" data-title="Entry 8">
+        <div class="content-wrap"><div class="placeholder-card"><div class="eyebrow">Entry 08</div><h2>Slide 8</h2><p class="placeholder-text">Add your eighth entry here.</p><div class="placeholder-chip">Replace with your content</div></div></div>
+      </section>
+      <section class="slide" data-title="Entry 9">
+        <div class="content-wrap"><div class="placeholder-card"><div class="eyebrow">Entry 09</div><h2>Slide 9</h2><p class="placeholder-text">Add your ninth entry here.</p><div class="placeholder-chip">Replace with your content</div></div></div>
+      </section>
+      <section class="slide" data-title="Entry 10">
+        <div class="content-wrap"><div class="placeholder-card"><div class="eyebrow">Entry 10</div><h2>Slide 10</h2><p class="placeholder-text">Add your tenth entry here.</p><div class="placeholder-chip">Replace with your content</div></div></div>
+      </section>
+      <section class="slide" data-title="Entry 11">
+        <div class="content-wrap"><div class="placeholder-card"><div class="eyebrow">Entry 11</div><h2>Slide 11</h2><p class="placeholder-text">Add your eleventh entry here.</p><div class="placeholder-chip">Replace with your content</div></div></div>
+      </section>
+      <section class="slide" data-title="Entry 12">
+        <div class="content-wrap"><div class="placeholder-card"><div class="eyebrow">Entry 12</div><h2>Slide 12</h2><p class="placeholder-text">Add your twelfth entry here.</p><div class="placeholder-chip">Replace with your content</div></div></div>
+      </section>
+      <section class="slide" data-title="Entry 13">
+        <div class="content-wrap"><div class="placeholder-card"><div class="eyebrow">Entry 13</div><h2>Slide 13</h2><p class="placeholder-text">Add your thirteenth entry here.</p><div class="placeholder-chip">Replace with your content</div></div></div>
+      </section>
+      <section class="slide" data-title="Entry 14">
+        <div class="content-wrap"><div class="placeholder-card"><div class="eyebrow">Entry 14</div><h2>Slide 14</h2><p class="placeholder-text">Add your fourteenth entry here.</p><div class="placeholder-chip">Replace with your content</div></div></div>
+      </section>
+      <section class="slide" data-title="Entry 15">
+        <div class="content-wrap"><div class="placeholder-card"><div class="eyebrow">Entry 15</div><h2>Slide 15</h2><p class="placeholder-text">Add your fifteenth entry here.</p><div class="placeholder-chip">Replace with your content</div></div></div>
+      </section>
 
-function restartQuiz() {
-  answers = {}; currentQ = 0;
-  document.getElementById('results').style.display = 'none';
-  document.getElementById('intro').style.display = 'block';
-  document.getElementById('step1').className = 'step-item active';
-  document.getElementById('step2').className = 'step-item';
-  document.getElementById('step3').className = 'step-item';
-}
-</script>
+      <section class="slide" data-title="Closing Statement">
+        <div class="content-wrap">
+          <div class="closing-card">
+            <div class="closing-grid">
+              <div>
+                <div class="eyebrow">Closing Reflection</div>
+                <h2>Ending Statement</h2>
+                <p class="lead">
+                  Use this final page to reflect on what <em>Jagged Little Pill</em> revealed about gender,
+                  performance, invisibility, and voice.
+                </p>
+                <br />
+                <p class="body-copy">
+                  This is a good place to return to your thesis, mention your feminist reading, and end with your
+                  own takeaway about what it means to be seen versus what it costs to appear fine.
+                </p>
+              </div>
+              <div class="prompt-box">
+                <h3>Closing ideas to include</h3>
+                <ul>
+                  <li>What the project taught you</li>
+                  <li>How the musical connects to feminist theory</li>
+                  <li>Why the contrast between inner and outer selves matters</li>
+                  <li>What you want viewers to leave thinking about</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <button class="nav-btn nav-prev" id="prevBtn" aria-label="Previous slide">&#8249;</button>
+    <button class="nav-btn nav-next" id="nextBtn" aria-label="Next slide">&#8250;</button>
+
+    <div class="bottom-nav">
+      <span class="slide-count" id="slideCount">Page 1 of 17</span>
+    </div>
+  </div>
+
+  <script>
+    const slides = document.querySelectorAll('.slide');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const slideCount = document.getElementById('slideCount');
+    const pageIndicator = document.getElementById('pageIndicator');
+
+    let currentSlide = 0;
+
+    function updateSlides() {
+      slides.forEach((slide, index) => {
+        slide.classList.toggle('active', index === currentSlide);
+      });
+
+      const title = slides[currentSlide].dataset.title || `Page ${currentSlide + 1}`;
+      pageIndicator.textContent = title;
+      slideCount.textContent = `Page ${currentSlide + 1} of ${slides.length}`;
+
+      prevBtn.disabled = currentSlide === 0;
+      nextBtn.disabled = currentSlide === slides.length - 1;
+    }
+
+    prevBtn.addEventListener('click', () => {
+      if (currentSlide > 0) {
+        currentSlide--;
+        updateSlides();
+      }
+    });
+
+    nextBtn.addEventListener('click', () => {
+      if (currentSlide < slides.length - 1) {
+        currentSlide++;
+        updateSlides();
+      }
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' && currentSlide < slides.length - 1) {
+        currentSlide++;
+        updateSlides();
+      }
+      if (e.key === 'ArrowLeft' && currentSlide > 0) {
+        currentSlide--;
+        updateSlides();
+      }
+    });
+
+    updateSlides();
+  </script>
 </body>
 </html>
